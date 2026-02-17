@@ -18,7 +18,7 @@
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />в
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Reqnroll" Version="3.3.2" />
     <PackageReference Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="3.3.2" />
     <PackageReference Include="Reqnroll.NUnit" Version="3.3.2" />
@@ -27,11 +27,9 @@
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="144.0.7559.10900" />
     <PackageReference Include="WebDriverManager" Version="2.17.6" />
   </ItemGroup>
-
   <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -40,14 +38,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\RestSharp.ApiTests\RestSharp.ApiTests.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
-
 </Project>

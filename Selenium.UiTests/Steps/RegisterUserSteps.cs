@@ -1,0 +1,66 @@
+﻿using AutomationFrameworks.Common.Models;
+using AutomationFrameworks.Common.Models.Builders;
+using AutomationFrameworks.Common.Models.Factories;
+using AutomationFrameworks.Common.Utilities;
+using OpenQA.Selenium;
+using Reqnroll;
+using RestSharp.ApiTests.Apis;
+using SeleniumFramework.DatabaseOperations.Operations;
+using SeleniumFramework.Pages;
+using SeleniumFramework.Utilities.Constants;
+
+namespace SeleniumFramework.Steps;
+
+[Binding]
+public class RegisterUserSteps
+{
+    private readonly ScenarioContext _context;
+    private readonly RegisterUserPage _registerUserPage;
+    private readonly LoginPage _loginPage;
+    private readonly UserOperations _userOperations;
+    private readonly IUserFactory _userFactory;
+    private readonly UsersApi _usersApi;
+
+    public RegisterUserSteps(IUserFactory userFactory, ScenarioContext context, LoginPage loginPage, RegisterUserPage registerUserPage, UserOperations userOperations, UsersApi usersApi)
+    {
+        this._userFactory = userFactory;
+        this._context = context;
+        this._loginPage = loginPage; 
+        this._registerUserPage = registerUserPage;
+        this._userOperations = userOperations;
+        this._usersApi = usersApi;
+    }
+
+    [Given("I register new user with valid details")]
+    public void GivenIRegisterNewUserWithValidDetails()
+    {
+        this._loginPage.ClickRegisterNewUser();
+
+        // Extract as Factory pattern and showcase builder pattern for user creation
+        var registeredUser = _userFactory.CreateDefault();
+        _context.Add(ContextConstants.RegisteredUser, registeredUser);
+
+        _registerUserPage.RegisterNewUser(registeredUser);
+
+        Retry.Until(() =>
+        {
+            var doUserExist = this._userOperations.CheckIfUserExistsByEmail(registeredUser.Email);
+            if (doUserExist == false)
+                throw new RetryException("Registerd User is not found in the database.");
+        }, [new StaleElementReferenceException()]);
+    }
+
+    [Given("user is created successfully")]
+    public void GivenUserIsCreatedSuccessfully()
+    {
+        var newUser = new UserExtendedModelBuilder().WithDefaultValues().Build();
+        var userResponse = _usersApi.CreateUser<UserExtendedModel>(newUser);
+        Assert.IsNotNull(userResponse.Data);
+        
+        var registeredUser = new UserModelBuilder()
+            .WithEmail(userResponse.Data?.Email ?? "")
+            .Build();
+        
+        _context[ContextConstants.RegisteredUser] = registeredUser;
+    }
+}
